@@ -24,7 +24,7 @@ export default function Dashboard() {
 
       <div style={{ padding: "40px", textAlign: "center" }}>
         <h1>Hi {username} 👋!</h1>
-        <h2>Welcome to Your World Come True Today</h2>
+        <h2>Welcome to Your World Come True 🚀 Version 2</h2>
       </div>
     </div>
   );
