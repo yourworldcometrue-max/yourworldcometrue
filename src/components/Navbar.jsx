@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-header-main">
-        {/* Updated Brand Logo Text with .com extension */}
+        {/* Updated Logo: yourworldcometrue.com with no spaces */}
         <div className="navbar-logo">
           yourworldcometrue<span>.com</span>
         </div>

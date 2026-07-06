@@ -25,7 +25,7 @@
   font-weight: 700;
   color: #1f2937;
   white-space: nowrap;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.03em; /* Removes extra gaps between letters */
 }
 .navbar-logo span { color: #43197a; }
 
@@ -118,7 +118,7 @@
 @media (max-width: 900px) {
   .navbar {
     flex-direction: column;
-    padding: 0.75rem 1rem; /* Slightly reduced horizontal padding */
+    padding: 0.75rem 1rem;
   }
 
   .navbar-header-main {
@@ -127,9 +127,9 @@
     align-items: center;
   }
 
-  /* Adjusts typography dynamically on mobile so the full string fits perfectly */
+  /* Shrinks text sizes cleanly on phones so the long string has no breaking spaces */
   .navbar-logo {
-    font-size: 1.15rem; 
+    font-size: 1.1rem; 
   }
 
   .hamburger-menu, .mobile-search-toggle {
