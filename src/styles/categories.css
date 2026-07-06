@@ -1,122 +1,79 @@
-.categories-section {
-  width: 100%;
-  background-color: #ffffff;
-  padding: 0;
-  margin: 0;
-}
+/* ==========================================================================
+   8th Slot Custom Brand Promo Box Styles 
+   ========================================================================== */
 
-/* Base layout: 7 columns side-by-side for desktop monitors */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  width: 100%;
-  gap: 0; 
-}
-
-/* Individual Card Frame Layout */
-.category-card {
-  position: relative;
-  display: block;
-  text-decoration: none;
-  overflow: hidden;
-  height: 440px; 
-  background-color: #000000;
-}
-
-.card-image-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.category-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease, filter 0.4s ease;
-  filter: brightness(0.85); /* Slightly dimmed initially so text pops */
-}
-
-/* Dark gradient to ensure text readability at the bottom */
-.card-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
-  transition: background 0.4s ease;
-}
-
-/* HOVER HIGHLIGHT INTERACTIONS */
-.category-card:hover .category-img {
-  transform: scale(1.06); /* Smooth internal zoom */
-  filter: brightness(1.05); /* Lights up the photo clearly */
-}
-
-.category-card:hover .card-overlay {
-  background: linear-gradient(to top, rgba(67, 25, 122, 0.8) 0%, rgba(0, 0, 0, 0) 100%); /* Adds a premium purple glow color overlay on hover */
-}
-
-/* Card Content Typography Overlay */
-.card-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 1.5rem 1rem;
-  box-sizing: border-box;
+.promo-card {
+  background: linear-gradient(135deg, #43197a 0%, #1f2937 100%);
+  display: none; /* Hidden on standard desktop 7-column flex rows */
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  box-sizing: border-box;
+  padding: 2rem;
+}
+
+.promo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
   z-index: 2;
 }
 
-.card-info h3 {
+.promo-badge {
+  background: #ffffff;
+  color: #43197a;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.promo-card h3 {
   color: #ffffff;
   font-size: 1.2rem;
   font-weight: 700;
-  margin: 0 0 0.4rem 0;
-}
-
-.card-info p {
-  color: #e5e7eb;
-  font-size: 0.85rem;
   margin: 0;
-  line-height: 1.4;
 }
 
-/* ==========================================================================
-   RESPONSIVE BREAKPOINTS (MOBILE & TABLET FIXES)
-   ========================================================================== */
+.promo-card p {
+  color: #d1d5db;
+  font-size: 0.8rem;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
 
-/* For Tablets and medium screens (1100px or less) */
+.promo-btn {
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.promo-card:hover .promo-btn {
+  border-color: #ffffff;
+}
+
+/* Responsive adjustment configurations */
 @media (max-width: 1100px) {
-  .categories-grid {
-    grid-template-columns: repeat(4, 1fr); /* Drop to 4 columns */
+  .promo-card {
+    display: flex; /* Displays seamlessly on Tablet grid setups */
   }
-  .category-card {
-    height: 380px; 
+  /* On 4-column tablet display grids, 8 total blocks completes rows perfectly */
+  .categories-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
-/* For Mobile Phones (650px or less) */
 @media (max-width: 650px) {
+  .promo-card {
+    display: flex; 
+    height: 280px; /* Locks block dimensions to match your mobile picture panels */
+  }
   .categories-grid {
-    grid-template-columns: repeat(2, 1fr); /* Perfect 2 columns on mobile devices */
-  }
-  .category-card {
-    height: 280px; /* Shorter card block height optimized for phone touch layouts */
-  }
-  .card-info h3 {
-    font-size: 1rem; 
-  }
-  .card-info p {
-    font-size: 0.75rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Trims down text block gracefully to 2 lines máximo on mobile */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    grid-template-columns: repeat(2, 1fr); /* 4 perfect rows of 2 blocks each */
   }
 }
