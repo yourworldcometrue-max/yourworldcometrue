@@ -25,6 +25,7 @@
   font-weight: 700;
   color: #1f2937;
   white-space: nowrap;
+  letter-spacing: -0.03em;
 }
 .navbar-logo span { color: #43197a; }
 
@@ -117,29 +118,33 @@
 @media (max-width: 900px) {
   .navbar {
     flex-direction: column;
-    padding: 0.75rem 1.2rem;
+    padding: 0.75rem 1rem; /* Slightly reduced horizontal padding */
   }
 
   .navbar-header-main {
     width: 100%;
     justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Adjusts typography dynamically on mobile so the full string fits perfectly */
+  .navbar-logo {
+    font-size: 1.15rem; 
   }
 
   .hamburger-menu, .mobile-search-toggle {
     display: flex; 
   }
 
-  /* Hides the desktop horizontal input display block */
   .navbar-search {
     display: none;
     width: 100%;
     margin: 0.5rem 0 0 0;
     box-sizing: border-box;
     flex: none;
-    border-radius: 8px; /* Clean rectangular input styling block for mobile views */
+    border-radius: 8px;
   }
 
-  /* Triggers down layout container visibility smoothly when active */
   .navbar-search.search-active {
     display: flex;
   }

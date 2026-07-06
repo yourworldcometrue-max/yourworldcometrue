@@ -8,9 +8,9 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-header-main">
-        {/* Logo */}
+        {/* Updated Brand Logo Text with .com extension */}
         <div className="navbar-logo">
-          yourworldcometrue<span>.</span>
+          yourworldcometrue<span>.com</span>
         </div>
 
         {/* Action Controls for Mobile Header */}
