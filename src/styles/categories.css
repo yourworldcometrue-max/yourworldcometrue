@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Categories Grid Styles
+   ========================================================================== */
+
 .categories-section {
   width: 100%;
   background-color: #ffffff;
@@ -103,18 +107,22 @@
 /* For Mobile Phones (650px or less) */
 @media (max-width: 650px) {
   .categories-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns for items 1-6 */
+    grid-template-columns: repeat(2, 1fr); 
   }
   
   .category-card {
     height: 280px; 
   }
 
-  /* CRITICAL MOBILE BLOCK ALIGNMENT: 
-     Selects the 7th card (Manage Finances) and stretches it across 
-     both mobile columns to leave absolutely zero white gaps! */
+  /* Locks the 7th block (Manage Finances) full width across mobile rows */
   .category-card:nth-child(7) {
     grid-column: span 2;
+  }
+
+  /* FIX: Vertically realigns the background image on the 7th grid frame 
+     so that the face and focus focal area stay clean and centered */
+  .category-card:nth-child(7) .category-img {
+    object-position: center 20%; 
   }
 
   .card-info h3 {
