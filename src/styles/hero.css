@@ -10,10 +10,10 @@
   background-position: center top;
   background-repeat: no-repeat;
   
-  /* Stretches image width completely edge-to-edge on desktop */
+  /* Keeps the banner 100% flush across all viewport frames */
   background-size: 100% auto; 
   
-  /* Desktop aspect ratio to eliminate the phantom scrollbar space */
+  /* Retains structural proportions perfectly */
   aspect-ratio: 16 / 6.2; 
 }
 
@@ -27,11 +27,10 @@
 /* ==========================================================================
    MOBILE HERO REFINEMENT
    ========================================================================== */
-@media (max-width: 650px) {
+@media (max-width: 768px) {
   .hero-section {
-    /* Prevents the banner from turning into a tiny thin strip on phone screens */
-    min-height: 180px; 
-    background-size: cover; /* Swaps to cover so it fits the mobile block height */
-    background-position: 23% top; /* Shifts the background slightly left to center the core text */
+    /* Dynamically updates the aspect ratio instead of using a rigid min-height box */
+    aspect-ratio: 16 / 6.5; 
+    background-size: 100% auto;
   }
 }
