@@ -1,0 +1,37 @@
+.hero-section {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff; 
+  
+  background-position: center top;
+  background-repeat: no-repeat;
+  
+  /* Stretches image width completely edge-to-edge on desktop */
+  background-size: 100% auto; 
+  
+  /* Desktop aspect ratio to eliminate the phantom scrollbar space */
+  aspect-ratio: 16 / 6.2; 
+}
+
+.hero-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   MOBILE HERO REFINEMENT
+   ========================================================================== */
+@media (max-width: 650px) {
+  .hero-section {
+    /* Prevents the banner from turning into a tiny thin strip on phone screens */
+    min-height: 180px; 
+    background-size: cover; /* Swaps to cover so it fits the mobile block height */
+    background-position: 23% top; /* Shifts the background slightly left to center the core text */
+  }
+}

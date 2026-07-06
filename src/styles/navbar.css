@@ -1,0 +1,116 @@
+/* Base Desktop Styles */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+.navbar-logo span { color: #43197a; }
+
+.navbar-search {
+  display: flex;
+  align-items: center;
+  flex: 0 1 400px;
+  background: #f3f4f6;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  margin: 0 1rem;
+}
+
+.navbar-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: #4b5563;
+  margin-left: 1.5rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover { color: #43197a; }
+
+.signup-btn {
+  background: #1f2937;
+  color: #ffffff !important;
+  padding: 0.5rem 1.2rem;
+  border-radius: 9999px;
+}
+
+.hamburger-menu {
+  display: none; /* Hidden on desktop viewports */
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger-menu .bar {
+  width: 100%;
+  height: 2px;
+  background-color: #1f2937;
+  transition: all 0.3s ease;
+}
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE NAVIGATION
+   ========================================================================== */
+@media (max-width: 900px) {
+  .hamburger-menu {
+    display: flex; /* Shows hamburger bars */
+  }
+
+  /* Turns the links section into a mobile dropdown layout drawer */
+  .navbar-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    max-height: 0; /* Keeps it hidden closed by default */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, padding 0.3s ease;
+  }
+
+  /* When the burger menu state opens it slides down gracefully */
+  .navbar-links.active {
+    max-height: 350px; 
+    padding: 1.5rem 0;
+  }
+
+  .navbar-links a {
+    margin: 0;
+    padding: 0.8rem 2rem;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .signup-btn {
+    border-radius: 0;
+    background: #43197a;
+  }
+}
