@@ -34,9 +34,9 @@
     background-size: 100% auto;
   }
 }
-/* --- IPAD / TABLET ONLY GAP FIX --- */
+/* --- IPAD / TABLET ONLY GAP & IMAGE BLUR FIX --- */
 @media (max-width: 1024px) and (min-width: 768px) {
-  /* This targets the 7-card layout container inside your hero/main area */
+  /* Targets the container grid */
   .hero-grid,
   .main-grid,
   [class*="grid"] {
@@ -44,7 +44,18 @@
     display: grid !important;
   }
 
-  /* This stretches the 7th item across both columns on iPad so the blank space disappears */
+  /* Target the images inside the grid cards to make them crisp */
+  .hero-grid img,
+  .main-grid img,
+  [class*="grid"] img,
+  .grid-card {
+    width: 100% !important;
+    height: 320px !important; /* Locks a uniform premium height for tablets */
+    object-fit: cover !important; /* Prevents stretching; crops perfectly like a premium gallery */
+    object-position: center !important; /* Keeps the focus on the faces/objects */
+  }
+
+  /* Keeps the 7th item spanning full width without stretching its inner layout weirdly */
   .hero-grid > :nth-child(7),
   .main-grid > :nth-child(7),
   [class*="grid"] > :nth-child(7) {
