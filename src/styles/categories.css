@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Categories Section & Grid (Desktop)
+   Categories Grid Styles (8 Columns Desktop)
    ========================================================================== */
+
 .categories-section {
   width: 100%;
   background-color: #ffffff;
@@ -8,9 +9,10 @@
   margin: 0;
 }
 
+/* Base layout: 8 columns side-by-side for desktop monitors */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 items side-by-side on desktop */
+  grid-template-columns: repeat(8, 1fr);
   width: 100%;
   gap: 0; 
 }
@@ -52,7 +54,7 @@
   transition: background 0.4s ease;
 }
 
-/* Hover Interactions */
+/* HOVER HIGHLIGHT INTERACTIONS */
 .category-card:hover .category-img {
   transform: scale(1.06);
   filter: brightness(1.05);
@@ -76,50 +78,50 @@
 
 .card-info h3 {
   color: #ffffff;
-  font-size: 1.2rem;
+  font-size: 1.1rem; /* Slightly balanced text sizing for 8 horizontal frames */
   font-weight: 700;
   margin: 0 0 0.4rem 0;
 }
 
 .card-info p {
   color: #e5e7eb;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   margin: 0;
   line-height: 1.4;
 }
 
 /* ==========================================================================
-   iPad / Tablet Layout (1024px or less)
+   RESPONSIVE BREAKPOINTS (IPAD & MOBILE FIXES)
    ========================================================================= */
-@media (max-width: 1024px) {
+
+/* iPad / Tablet Layout (1100px or less) */
+@media (max-width: 1100px) {
   .categories-grid {
-    grid-template-columns: repeat(4, 1fr); /* 4 columns on Tablet viewports */
+    grid-template-columns: repeat(4, 1fr); /* 2 balanced rows of 4 cards */
   }
   .category-card {
     height: 380px; 
   }
 }
 
-/* ==========================================================================
-   Mobile Phone Layout (650px or less)
-   ========================================================================= */
+/* Mobile Layout (650px or less) */
 @media (max-width: 650px) {
   .categories-grid {
-    grid-template-columns: repeat(2, 1fr); /* Clean 2 columns side-by-side */
+    grid-template-columns: repeat(2, 1fr); /* 4 balanced rows of 2 cards */
   }
   
   .category-card {
     height: 280px; 
   }
 
-  /* Stretches the 7th card full width to remove the odd empty white grid slot */
-  .category-card:nth-child(7) {
-    grid-column: span 2;
-  }
-
-  /* Keeps the 7th card subject perfectly framed and clear */
+  /* 7th Card (Manage Finances) Alignment tuning */
   .category-card:nth-child(7) .category-img {
     object-position: center 20%; 
+  }
+
+  /* 8th Card (Offers & Deals) Face alignment tuning */
+  .category-card:nth-child(8) .category-img {
+    object-position: center 15%; 
   }
 
   .card-info h3 {

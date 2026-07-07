@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/categories.css';
 
-// Import all 7 interactive category images
+// Import all 8 interactive category images
 import shopImg from '../assets/categories/shop.jpg';
 import travelImg from '../assets/categories/travel.jpg';
 import foodImg from '../assets/categories/food.jpg';
@@ -9,6 +9,7 @@ import healthImg from '../assets/categories/health.jpg';
 import educationImg from '../assets/categories/education.jpg';
 import newsImg from '../assets/categories/news.jpg';
 import financeImg from '../assets/categories/finance.jpg';
+import dealsImg from '../assets/categories/deals.jpg'; // Make sure to add this image!
 
 const categoryData = [
   { id: 1, title: 'Shop Smart', desc: 'Best deals. Trusted products.', img: shopImg, link: '/shop' },
@@ -18,6 +19,7 @@ const categoryData = [
   { id: 5, title: 'Learn & Grow', desc: 'Education. Jobs. Skills for your future.', img: educationImg, link: '/education' },
   { id: 6, title: 'Stay Informed', desc: 'News. Updates. What matters to you.', img: newsImg, link: '/news' },
   { id: 7, title: 'Manage Finances', desc: 'Smart money. Secure future.', img: financeImg, link: '/finance' },
+  { id: 8, title: 'Offers & Deals', desc: 'Best discounts. Limited time offers.', img: dealsImg, link: '/deals' },
 ];
 
 const Categories = () => {
