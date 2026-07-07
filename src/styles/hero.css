@@ -34,3 +34,20 @@
     background-size: 100% auto;
   }
 }
+/* --- IPAD / TABLET ONLY GAP FIX --- */
+@media (max-width: 1024px) and (min-width: 768px) {
+  /* This targets the 7-card layout container inside your hero/main area */
+  .hero-grid,
+  .main-grid,
+  [class*="grid"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    display: grid !important;
+  }
+
+  /* This stretches the 7th item across both columns on iPad so the blank space disappears */
+  .hero-grid > :nth-child(7),
+  .main-grid > :nth-child(7),
+  [class*="grid"] > :nth-child(7) {
+    grid-column: span 2 !important;
+  }
+}
