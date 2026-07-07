@@ -1,7 +1,6 @@
 /* ==========================================================================
-   Categories Grid Styles
+   Categories Section & Grid (Desktop)
    ========================================================================== */
-
 .categories-section {
   width: 100%;
   background-color: #ffffff;
@@ -9,10 +8,9 @@
   margin: 0;
 }
 
-/* Perfect 7-column layout strip stretching fully wide for desktop monitors */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr); /* 7 items side-by-side on desktop */
   width: 100%;
   gap: 0; 
 }
@@ -54,7 +52,7 @@
   transition: background 0.4s ease;
 }
 
-/* HOVER HIGHLIGHT INTERACTIONS */
+/* Hover Interactions */
 .category-card:hover .category-img {
   transform: scale(1.06);
   filter: brightness(1.05);
@@ -91,36 +89,35 @@
 }
 
 /* ==========================================================================
-   RESPONSIVE BREAKPOINTS (MOBILE & TABLET FIXES)
+   iPad / Tablet Layout (1024px or less)
    ========================================================================= */
-
-/* For Tablets and medium screens (1100px or less) */
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   .categories-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* 4 columns on Tablet viewports */
   }
   .category-card {
     height: 380px; 
   }
 }
 
-/* For Mobile Phones (650px or less) */
+/* ==========================================================================
+   Mobile Phone Layout (650px or less)
+   ========================================================================= */
 @media (max-width: 650px) {
   .categories-grid {
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 1fr); /* Clean 2 columns side-by-side */
   }
   
   .category-card {
     height: 280px; 
   }
 
-  /* Locks the 7th block (Manage Finances) full width across mobile rows */
+  /* Stretches the 7th card full width to remove the odd empty white grid slot */
   .category-card:nth-child(7) {
     grid-column: span 2;
   }
 
-  /* FIX: Vertically realigns the background image on the 7th grid frame 
-     so that the face and focus focal area stay clean and centered */
+  /* Keeps the 7th card subject perfectly framed and clear */
   .category-card:nth-child(7) .category-img {
     object-position: center 20%; 
   }
