@@ -22,12 +22,23 @@ const categoryData = [
   { id: 8, title: 'Offers & Deals', desc: 'Best discounts. Limited time offers.', img: dealsImg, link: '/deals' },
 ];
 
-const Categories = () => {
+const Categories = ({ onTravelClick }) => {
   return (
     <section className="categories-section">
       <div className="categories-grid">
         {categoryData.map((item) => (
-          <a href={item.link} className="category-card" key={item.id}>
+          <a 
+            href={item.link} 
+            className="category-card" 
+            key={item.id}
+            onClick={(e) => {
+              // If it's the 2nd card (Travel More), stop page redirect and play the video popup instead
+              if (item.id === 2 && onTravelClick) {
+                e.preventDefault();
+                onTravelClick();
+              }
+            }}
+          >
             <div className="card-image-wrapper">
               <img src={item.img} alt={item.title} className="category-img" />
               <div className="card-overlay"></div>
