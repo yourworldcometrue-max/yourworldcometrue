@@ -13,17 +13,12 @@ export default function Navbar({ onNavigate }) {
   };
 
   // Triggers the Google Search in a new browser tab
-  const executeGoogleSearch = (query) => {
-    if (!query.trim()) return;
-    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+  const executeGoogleSearch = (e) => {
+    if (e) e.preventDefault(); // Prevents the page from refreshing on submit
+    if (!searchQuery.trim()) return;
+    
+    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
     window.open(googleSearchUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  // Handles Key Down events (Like pressing the Enter key)
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      executeGoogleSearch(searchQuery);
-    }
   };
 
   return (
@@ -42,23 +37,22 @@ export default function Navbar({ onNavigate }) {
 
         {/* DESKTOP SEARCH CONTAINER */}
         <div className="navbar-search-wrapper desktop-only">
-          <div className="search-box-relative">
+          <form onSubmit={executeGoogleSearch} className="search-box-relative">
             <input
               type="text"
               placeholder="Search for products, brands, and more..."
               className="search-input-field"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
             />
-            <span 
+            <button 
+              type="submit"
               className="search-icon-right" 
-              onClick={() => executeGoogleSearch(searchQuery)}
-              style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               🔍
-            </span>
-          </div>
+            </button>
+          </form>
         </div>
 
         {/* ACTIONS & NAVIGATION LINKS */}
@@ -110,33 +104,33 @@ export default function Navbar({ onNavigate }) {
       {/* MOBILE EXPANDED SEARCH BAR OVERLAY */}
       {searchOpen && (
         <div className="mobile-search-overlay-bar">
-          <div className="search-box-relative w-full">
+          <form onSubmit={executeGoogleSearch} className="search-box-relative w-full">
             <input
               type="text"
               placeholder="Search for products, brands..."
               className="search-input-field for-mobile"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
               autoFocus
             />
             {searchQuery ? (
               <button 
+                type="button"
                 onClick={() => setSearchQuery('')} 
                 className="search-clear-action-btn"
               >
                 ✕
               </button>
             ) : (
-              <span 
+              <button 
+                type="submit"
                 className="search-icon-right"
-                onClick={() => executeGoogleSearch(searchQuery)}
-                style={{ right: '16px', cursor: 'pointer', pointerEvents: 'auto' }}
+                style={{ right: '16px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
                 🔍
-              </span>
+              </button>
             )}
-          </div>
+          </form>
         </div>
       )}
 
