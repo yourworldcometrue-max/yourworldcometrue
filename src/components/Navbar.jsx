@@ -12,6 +12,20 @@ export default function Navbar({ onNavigate }) {
     setSearchOpen(false);
   };
 
+  // Triggers the Google Search in a new browser tab
+  const executeGoogleSearch = (query) => {
+    if (!query.trim()) return;
+    const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    window.open(googleSearchUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  // Handles Key Down events (Like pressing the Enter key)
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      executeGoogleSearch(searchQuery);
+    }
+  };
+
   return (
     <nav className="site-navbar">
       {/* MAIN NAVBAR ROW CONTAINER */}
@@ -35,8 +49,15 @@ export default function Navbar({ onNavigate }) {
               className="search-input-field"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
-            <span className="search-icon-right">🔍</span>
+            <span 
+              className="search-icon-right" 
+              onClick={() => executeGoogleSearch(searchQuery)}
+              style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+            >
+              🔍
+            </span>
           </div>
         </div>
 
@@ -96,15 +117,24 @@ export default function Navbar({ onNavigate }) {
               className="search-input-field for-mobile"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
               autoFocus
             />
-            {searchQuery && (
+            {searchQuery ? (
               <button 
                 onClick={() => setSearchQuery('')} 
                 className="search-clear-action-btn"
               >
                 ✕
               </button>
+            ) : (
+              <span 
+                className="search-icon-right"
+                onClick={() => executeGoogleSearch(searchQuery)}
+                style={{ right: '16px', cursor: 'pointer', pointerEvents: 'auto' }}
+              >
+                🔍
+              </span>
             )}
           </div>
         </div>
