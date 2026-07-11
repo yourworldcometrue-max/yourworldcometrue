@@ -3,19 +3,35 @@ import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import Categories from '../components/Categories'; 
 import Trending from '../components/Trending';
+import DealsPage from './DealsPage'; // <-- Import your new deals page layout
 
 // 1. IMPORT YOUR ACTUAL TRAVEL INTRO VIDEO FILE
 import travelIntroVid from '../assets/categories/travel-intro.mp4';
 
 const LandingPage = ({ onNavigate }) => {
   const [showVideo, setShowVideo] = useState(false);
+  const [currentView, setCurrentView] = useState('home'); // <-- Track whether to show home grid or deals view
+
+  // If the user triggered the Offers & Deals page view, display it exclusively
+  if (currentView === 'deals') {
+    return (
+      <div className="landing-page">
+        <Navbar onNavigate={onNavigate} />
+        <DealsPage onBack={() => setCurrentView('home')} />
+      </div>
+    );
+  }
 
   return (
     <div className="landing-page">
       <Navbar onNavigate={onNavigate} />
       <Hero />
       
-      <Categories onTravelClick={() => setShowVideo(true)} />
+      {/* Connected both travel modal click and deals page navigation view toggle */}
+      <Categories 
+        onTravelClick={() => setShowVideo(true)} 
+        onDealsClick={() => setCurrentView('deals')}
+      />
       
       <Trending />
 

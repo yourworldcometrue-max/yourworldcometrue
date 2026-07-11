@@ -4,7 +4,8 @@ import { supabase } from '/src/supabaseClient';
 // 2. FIXED PATH: Point straight to the root styles directory
 import '/src/styles/auth.css';
 
-const Login = () => {
+// UPDATED: Destructured onNavigate from props here
+const Login = ({ onNavigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,6 +25,10 @@ const Login = () => {
       setMessage(`❌ ${error.message}`);
     } else {
       setMessage('✨ Login successful! Welcome back.');
+      // UPDATED: Automatically kick user back to the landing view upon successful login
+      if (onNavigate) {
+        onNavigate('landing');
+      }
     }
     setLoading(false);
   };
@@ -64,6 +69,22 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)} 
               required 
             />
+          </div>
+
+          {/* UPDATED: Embedded Forgot Password utility link right under the input field */}
+          <div style={{ textAlign: 'right', marginTop: '-10px', marginBottom: '20px' }}>
+            <span 
+              onClick={() => onNavigate && onNavigate('forgot-password')} 
+              style={{ 
+                color: '#2563eb', 
+                cursor: 'pointer', 
+                fontSize: '0.85rem', 
+                fontWeight: '500',
+                textDecoration: 'underline'
+              }}
+            >
+              Forgot Password?
+            </span>
           </div>
 
           <button type="submit" disabled={loading} className="auth-submit-btn">

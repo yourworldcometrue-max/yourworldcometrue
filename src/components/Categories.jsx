@@ -22,7 +22,8 @@ const categoryData = [
   { id: 8, title: 'Offers & Deals', desc: 'Best discounts. Limited time offers.', img: dealsImg, link: '/deals' },
 ];
 
-const Categories = ({ onTravelClick }) => {
+// Added 'onDealsClick' destructuring here
+const Categories = ({ onTravelClick, onDealsClick }) => {
   return (
     <section className="categories-section">
       <div className="categories-grid">
@@ -36,6 +37,11 @@ const Categories = ({ onTravelClick }) => {
               if (item.id === 2 && onTravelClick) {
                 e.preventDefault();
                 onTravelClick();
+              }
+              // If it's the 8th card (Offers & Deals), stop page redirect and open the deals screen instead
+              if (item.id === 8 && onDealsClick) {
+                e.preventDefault();
+                onDealsClick();
               }
             }}
           >

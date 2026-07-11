@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 export default function MediaUpload({ onUploadSuccess }) {
   const [loading, setLoading] = useState(false);
 
-  // Your Cloudinary credentials
-  const CLOUD_NAME = "YOUR_ACTUAL_CLOUD_NAME_HERE"; 
-  const UPLOAD_PRESET = "yourworldcometrue_preset"; 
+ const CLOUD_NAME = "rpiegymv"; 
+const UPLOAD_PRESET = "yourworldcometrue_preset";
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];

@@ -152,3 +152,96 @@
 .facebook-btn:hover {
   color: #1877f2;
 }
+
+/* ==========================================================================
+   ADDED NEW UPDATES: Page wrapper, Back Buttons, and Password View Toggles
+   ========================================================================== */
+
+.auth-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.back-to-home-btn {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.back-to-home-btn:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* Ensures password texts never clip under the absolute-positioned eye icon */
+.form-group input[type="password"],
+.form-group input[type="text"] {
+  padding-right: 2.5rem;
+}
+
+/* ==========================================================================
+   ADDED RESPONSIVE MEDIA QUERIES: Mobile & Tablet View Adjustments
+   ========================================================================== */
+
+/* Tablet Optimization (Screens 768px and down) */
+@media (max-width: 768px) {
+  .auth-container {
+    min-height: 90vh;
+    padding: 1.5rem 1rem;
+  }
+  
+  .auth-card {
+    padding: 2.25rem 1.75rem;
+  }
+}
+
+/* Mobile Optimization (Screens 480px and down) */
+@media (max-width: 480px) {
+  .auth-container {
+    min-height: 100vh;
+    background-color: #ffffff; /* Seamless full-page bleed on phones */
+    padding: 1rem;
+  }
+
+  .auth-card {
+    box-shadow: none;
+    border: none;
+    padding: 1.5rem 0.5rem;
+  }
+
+  .auth-card h2 {
+    font-size: 1.45rem;
+  }
+
+  .form-group input {
+    font-size: 16px; /* CRITICAL: Prevents iOS Safari from auto-zooming page layout on input tap */
+    padding: 0.85rem 2.5rem 0.85rem 0.85rem;
+  }
+
+  /* Adjust vertical alignment of absolute eye toggle positioning specifically for mobile bounds */
+  .form-group span {
+    top: 35px !important;
+    right: 12px !important;
+    font-size: 1.25rem !important;
+  }
+
+  .auth-submit-btn {
+    padding: 0.95rem;
+    font-size: 1.05rem;
+  }
+
+  .social-auth-grid {
+    flex-direction: column; /* Stacks Google/Facebook controls comfortably on phone views */
+    gap: 0.5rem;
+  }
+}
