@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { supabase } from '/src/supabaseClient';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import '../styles/auth.css';
 
 const Signup = () => {
@@ -7,110 +8,107 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
+  const [alternateEmail, setAlternateEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
-    // 1. Core authentication account registration with Supabase
-    const { data, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    const { data, error: authError } = await supabase.auth.signUp({ email, password });
 
     if (authError) {
-      setMessage(`❌ ${authError.message}`);
+      setMessage(`${authError.message}`);
       setLoading(false);
       return;
     }
 
-    // 2. Link account with custom application metadata row (Username profile)
     if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([
-          {
-            id: data.user.id,
-            username: username.toLowerCase().trim(),
-            full_name: fullName,
-            updated_at: new Date(),
-          },
-        ]);
+      const { error: profileError } = await supabase.from('profiles').insert([
+        {
+          id: data.user.id,
+          username: username.toLowerCase().trim(),
+          full_name: fullName,
+          alternate_email: alternateEmail.trim() || null,
+          updated_at: new Date(),
+        },
+      ]);
 
       if (profileError) {
-        setMessage(`❌ Profile creation issue: ${profileError.message}`);
+        setMessage(`Account created, but profile setup failed: ${profileError.message}`);
       } else {
-        setMessage('✨ Account registered! Check your email inbox for a verification confirmation link.');
-        // Optional clearing of state values on execution success
+        setMessage('Account created — check your inbox to verify your email.');
         setEmail('');
         setPassword('');
         setUsername('');
         setFullName('');
+        setAlternateEmail('');
       }
     }
     setLoading(false);
   };
 
+  const handleGoogleSignup = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/complete-profile` },
+    });
+    if (error) setMessage(`Google sign-up failed: ${error.message}`);
+  };
+
   return (
     <div className="auth-container">
+      <Link to="/" className="back-to-home-btn">← Back to home</Link>
       <div className="auth-card">
-        <h2>Join yourworldcometrue<span>.com</span></h2>
-        <p className="auth-subtitle">Create a global profile handle to start interacting</p>
-        
+        <h2>Join Your World Come True</h2>
+        <p className="auth-subtitle">Sign up with Google, or fill in your details below</p>
+
         {message && <div className="auth-alert">{message}</div>}
+
+        <div className="social-auth-grid social-auth-grid-single">
+          <button onClick={handleGoogleSignup} className="social-btn social-btn-google">
+            <span className="social-btn-icon" aria-hidden="true">G</span>
+            Continue with Google
+          </button>
+        </div>
+
+        <div className="auth-divider"><span>or sign up with details</span></div>
 
         <form onSubmit={handleSignupSubmit} className="auth-form">
           <div className="form-group">
-            <label>Choose Username</label>
-            <input 
-              type="text" 
-              placeholder="e.g., vlogger_96" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              required 
-            />
+            <label>Username</label>
+            <input type="text" placeholder="e.g. jordan_96" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </div>
 
           <div className="form-group">
-            <label>Full Name</label>
-            <input 
-              type="text" 
-              placeholder="Your Name" 
-              value={fullName} 
-              onChange={(e) => setFullName(e.target.value)} 
-              required 
-            />
+            <label>Full name</label>
+            <input type="text" placeholder="Your name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
           </div>
 
           <div className="form-group">
-            <label>Email Address</label>
-            <input 
-              type="email" 
-              placeholder="name@example.com" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
-            />
+            <label>Email address</label>
+            <input type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
+
+          <div className="form-group">
+            <label>Alternate email <span className="field-optional">(for account recovery)</span></label>
+            <input type="email" placeholder="backup@example.com" value={alternateEmail} onChange={(e) => setAlternateEmail(e.target.value)} />
           </div>
 
           <div className="form-group">
             <label>Password</label>
-            <input 
-              type="password" 
-              placeholder="••••••••" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
+            <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
 
           <button type="submit" disabled={loading} className="auth-submit-btn">
-            {loading ? 'Processing...' : 'Sign Up Globally ✨'}
+            {loading ? 'Creating account…' : 'Sign up'}
           </button>
         </form>
+
+        <p className="auth-switch">Already have an account? <Link to="/login" className="auth-inline-link">Log in</Link></p>
       </div>
     </div>
   );

@@ -1,14 +1,16 @@
 import React from 'react';
-import '../styles/trending.css'; // or your correct style path
+import '../styles/trending.css';
 
 const Trending = () => {
   return (
-    <div className="trending-container">
-      {/* Your trending layout/cards code goes here */}
-      <h3>Trending Global Destinations</h3>
-    </div>
+    <section className="trending-section container">
+      <p className="section-eyebrow">Coming into view</p>
+      <h2 className="section-title">Trending in your world</h2>
+      <p className="trending-placeholder">
+        Personalized trending picks land here once you're browsing categories.
+      </p>
+    </section>
   );
 };
 
-// CRITICAL FIX: Make sure this exact line exists at the very bottom!
 export default Trending;

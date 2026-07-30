@@ -1,109 +1,78 @@
 import React, { useState } from 'react';
-// 1. FIXED PATH: Point straight to the root src directory
-import { supabase } from '/src/supabaseClient';
-// 2. FIXED PATH: Point straight to the root styles directory
-import '/src/styles/auth.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
+import '../styles/auth.css';
 
-// UPDATED: Destructured onNavigate from props here
-const Login = ({ onNavigate }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setMessage(`❌ ${error.message}`);
+      setMessage(`Couldn't sign you in: ${error.message}`);
     } else {
-      setMessage('✨ Login successful! Welcome back.');
-      // UPDATED: Automatically kick user back to the landing view upon successful login
-      if (onNavigate) {
-        onNavigate('landing');
-      }
+      setMessage('Welcome back.');
+      navigate('/');
     }
     setLoading(false);
   };
 
-  const handleSocialLogin = async (provider) => {
+  const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: provider,
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/complete-profile` },
     });
-    if (error) setMessage(`❌ ${provider} login failed: ${error.message}`);
+    if (error) setMessage(`Google login failed: ${error.message}`);
   };
 
   return (
     <div className="auth-container">
+      <Link to="/" className="back-to-home-btn">← Back to home</Link>
       <div className="auth-card">
-        <h2>Welcome Back<span>.com</span></h2>
-        <p className="auth-subtitle">Log in to interact with your global community</p>
-        
+        <h2>Welcome back</h2>
+        <p className="auth-subtitle">Log in to pick up where you left off</p>
+
         {message && <div className="auth-alert">{message}</div>}
 
         <form onSubmit={handleLoginSubmit} className="auth-form">
           <div className="form-group">
-            <label>Email Address</label>
-            <input 
-              type="email" 
-              placeholder="name@example.com" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
-            />
+            <label>Email address</label>
+            <input type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
 
           <div className="form-group">
             <label>Password</label>
-            <input 
-              type="password" 
-              placeholder="••••••••" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
+            <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
 
-          {/* UPDATED: Embedded Forgot Password utility link right under the input field */}
-          <div style={{ textAlign: 'right', marginTop: '-10px', marginBottom: '20px' }}>
-            <span 
-              onClick={() => onNavigate && onNavigate('forgot-password')} 
-              style={{ 
-                color: '#2563eb', 
-                cursor: 'pointer', 
-                fontSize: '0.85rem', 
-                fontWeight: '500',
-                textDecoration: 'underline'
-              }}
-            >
-              Forgot Password?
-            </span>
+          <div className="auth-forgot-row">
+            <Link to="/forgot-password" className="auth-inline-link">Forgot password?</Link>
           </div>
 
           <button type="submit" disabled={loading} className="auth-submit-btn">
-            {loading ? 'Verifying...' : 'Sign In'}
+            {loading ? 'Verifying…' : 'Sign in'}
           </button>
         </form>
 
-        <div className="auth-divider">
-          <span>or connect via</span>
+        <div className="auth-divider"><span>or continue with</span></div>
+
+        <div className="social-auth-grid social-auth-grid-single">
+          <button onClick={handleGoogleLogin} className="social-btn social-btn-google">
+            <span className="social-btn-icon" aria-hidden="true">G</span>
+            Continue with Google
+          </button>
         </div>
 
-        <div className="social-auth-grid">
-          <button onClick={() => handleSocialLogin('google')} className="social-btn google-btn">
-            Google
-          </button>
-          <button onClick={() => handleSocialLogin('facebook')} className="social-btn facebook-btn">
-            Facebook
-          </button>
-        </div>
+        <p className="auth-switch">New here? <Link to="/signup" className="auth-inline-link">Create an account</Link></p>
       </div>
     </div>
   );

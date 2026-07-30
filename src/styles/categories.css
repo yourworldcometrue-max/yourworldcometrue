@@ -1,38 +1,50 @@
-/* ==========================================================================
-   Categories Grid Styles (8 Columns Desktop)
-   ========================================================================== */
-
 .categories-section {
-  width: 100%;
-  background-color: #ffffff;
-  padding: 0;
-  margin: 0;
+  padding: 64px 0 72px;
 }
 
-/* Base layout: 8 columns side-by-side for desktop monitors */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  width: 100%;
-  gap: 0; 
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 10px;
 }
 
-/* Individual Card Frame Layout */
+.section-title {
+  font-size: var(--step-h1);
+  color: var(--ink);
+  margin-bottom: 32px;
+  max-width: 20ch;
+}
+
+/* Mobile: horizontal snap-scroll strip (natural touch pattern) */
+.categories-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.categories-track::-webkit-scrollbar { display: none; }
+
 .category-card {
-  position: relative;
-  display: block;
-  text-decoration: none;
+  scroll-snap-align: start;
+  flex: 0 0 72%;
+  background: var(--paper-raised);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  height: 440px; 
-  background-color: #000000;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
 }
 
-.card-image-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.category-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+
+.category-image-wrapper {
+  position: relative;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
 }
 
@@ -40,96 +52,43 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease, filter 0.4s ease;
-  filter: brightness(0.85);
+  transition: transform 400ms var(--ease);
 }
 
-.card-overlay {
+.category-card:hover .category-img { transform: scale(1.06); }
+
+.category-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
-  transition: background 0.4s ease;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(18,33,63,0.55) 100%);
 }
 
-/* HOVER HIGHLIGHT INTERACTIONS */
-.category-card:hover .category-img {
-  transform: scale(1.06);
-  filter: brightness(1.05);
+.category-info {
+  padding: 16px 18px 20px;
 }
 
-.category-card:hover .card-overlay {
-  background: linear-gradient(to top, rgba(67, 25, 122, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+.category-info h3 {
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin-bottom: 4px;
 }
 
-/* Card Content Typography Overlay */
-.card-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 1.5rem 1rem;
-  box-sizing: border-box;
-  text-align: center;
-  z-index: 2;
+.category-info p {
+  font-size: 0.85rem;
+  color: var(--slate);
 }
 
-.card-info h3 {
-  color: #ffffff;
-  font-size: 1.1rem; /* Slightly balanced text sizing for 8 horizontal frames */
-  font-weight: 700;
-  margin: 0 0 0.4rem 0;
+/* Desktop: switch to a grid */
+@media (min-width: 900px) {
+  .categories-track {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    overflow: visible;
+  }
+  .category-card { flex: none; }
 }
 
-.card-info p {
-  color: #e5e7eb;
-  font-size: 0.8rem;
-  margin: 0;
-  line-height: 1.4;
+@media (min-width: 1200px) {
+  .categories-track { grid-template-columns: repeat(4, 1fr); }
 }
-
-/* ==========================================================================
-   RESPONSIVE BREAKPOINTS (IPAD & MOBILE FIXES)
-   ========================================================================= */
-
-/* iPad / Tablet Layout (1100px or less) */
-@media (max-width: 1100px) {
-  .categories-grid {
-    grid-template-columns: repeat(4, 1fr); /* 2 balanced rows of 4 cards */
-  }
-  .category-card {
-    height: 380px; 
-  }
-}
-
-/* Mobile Layout (650px or less) */
-@media (max-width: 650px) {
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr); /* 4 balanced rows of 2 cards */
-  }
-  
-  .category-card {
-    height: 280px; 
-  }
-
-  /* 7th Card (Manage Finances) Alignment tuning */
-  .category-card:nth-child(7) .category-img {
-    object-position: center 20%; 
-  }
-
-  /* 8th Card (Offers & Deals) Face alignment tuning */
-  .category-card:nth-child(8) .category-img {
-    object-position: center 15%; 
-  }
-
-  .card-info h3 {
-    font-size: 1rem; 
-  }
-  
-  .card-info p {
-    font-size: 0.75rem;
-  }
-}
-

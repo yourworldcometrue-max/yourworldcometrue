@@ -1,42 +1,89 @@
-/* ==========================================================================
-   Hero Section Base (Desktop)
-   ========================================================================== */
 .hero-section {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+  position: relative;
+  min-height: 88vh;
   display: flex;
   align-items: center;
-  background-color: #ffffff; 
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-size: 100% auto; 
-  aspect-ratio: 16 / 6.2; /* Perfect ratio to remove scrollbar spacing */
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.38;
+}
+
+.hero-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(18,33,63,0.55) 0%, rgba(18,33,63,0.85) 100%);
+}
+
+/* quiet topographic contour motif — ties to the "atlas of your world" idea */
+.hero-contour {
+  position: absolute;
+  right: -10%;
+  top: -10%;
+  width: 70%;
+  height: 120%;
+  opacity: 0.12;
+  background-image:
+    repeating-radial-gradient(circle at 70% 30%, transparent 0, transparent 38px, var(--gold) 39px, transparent 40px);
+  pointer-events: none;
 }
 
 .hero-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 
-/* ==========================================================================
-   iPad / Tablet Viewport
-   ========================================================================== */
-@media (max-width: 1024px) {
-  .hero-section {
-    aspect-ratio: 16 / 6.5; 
-  }
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
 }
 
-/* ==========================================================================
-   Mobile Phone Viewport
-   ========================================================================== */
-@media (max-width: 650px) {
-  .hero-section {
-    aspect-ratio: 16 / 6.5;
-    background-size: 100% auto;
-  }
+.hero-title {
+  font-size: var(--step-hero);
+  color: var(--paper);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hero-subtitle {
+  margin-top: 22px;
+  font-size: clamp(1rem, 1vw + 0.9rem, 1.2rem);
+  color: rgba(251,248,243,0.8);
+  max-width: 46ch;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.btn-lg { padding: 14px 28px; font-size: 1rem; }
+
+.hero-actions .btn-ghost {
+  background: transparent;
+  color: var(--paper);
+  border-color: rgba(251,248,243,0.35);
+}
+
+.hero-actions .btn-ghost:hover { border-color: var(--paper); }
+
+@media (max-width: 480px) {
+  .hero-section { min-height: 78vh; }
 }
