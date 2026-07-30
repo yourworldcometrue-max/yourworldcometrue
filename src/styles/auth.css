@@ -170,3 +170,12 @@
 @media (max-width: 420px) {
   .auth-card { padding: 28px 20px; }
 }
+
+@media (max-width: 360px) {
+  .auth-card h2 { font-size: 1.4rem; }
+  .auth-card { padding: 24px 16px; }
+}
+
+@media (min-width: 1440px) {
+  .auth-card { max-width: 460px; padding: 44px 36px; }
+}

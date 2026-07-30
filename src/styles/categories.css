@@ -32,12 +32,28 @@
 
 .category-card {
   scroll-snap-align: start;
-  flex: 0 0 72%;
+  flex: 0 0 78%;
   background: var(--paper-raised);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+  opacity: 0;
+  animation: card-in 500ms var(--ease) forwards;
+}
+
+.category-card:nth-child(1) { animation-delay: 40ms; }
+.category-card:nth-child(2) { animation-delay: 90ms; }
+.category-card:nth-child(3) { animation-delay: 140ms; }
+.category-card:nth-child(4) { animation-delay: 190ms; }
+.category-card:nth-child(5) { animation-delay: 240ms; }
+.category-card:nth-child(6) { animation-delay: 290ms; }
+.category-card:nth-child(7) { animation-delay: 340ms; }
+.category-card:nth-child(8) { animation-delay: 390ms; }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .category-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
@@ -79,7 +95,23 @@
   color: var(--slate);
 }
 
-/* Desktop: switch to a grid */
+/* Small phones: slightly narrower cards so a peek of the next one always shows */
+@media (max-width: 380px) {
+  .category-card { flex: 0 0 84%; }
+  .section-title { font-size: 1.6rem; }
+}
+
+/* Tablets and up: switch to a grid */
+@media (min-width: 700px) and (max-width: 899px) {
+  .categories-track {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    overflow: visible;
+  }
+  .category-card { flex: none; }
+}
+
 @media (min-width: 900px) {
   .categories-track {
     display: grid;
@@ -90,6 +122,13 @@
   .category-card { flex: none; }
 }
 
-@media (min-width: 1200px) {
-  .categories-track { grid-template-columns: repeat(4, 1fr); }
+/* Large desktop / big monitors: a touch more breathing room, not more columns
+   (keeps cards from becoming oddly wide on ultra-wide screens) */
+@media (min-width: 1440px) {
+  .categories-track { gap: 24px; }
+  .section-title { font-size: 2.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-card { animation: none; opacity: 1; }
 }

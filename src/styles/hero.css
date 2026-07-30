@@ -11,7 +11,7 @@
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: center 25%;
   opacity: 0.38;
 }
 
@@ -41,6 +41,13 @@
   max-width: 760px;
   padding-top: 40px;
   padding-bottom: 40px;
+  opacity: 0;
+  animation: hero-in 650ms var(--ease) 80ms forwards;
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .hero-eyebrow {
@@ -84,6 +91,29 @@
 
 .hero-actions .btn-ghost:hover { border-color: var(--paper); }
 
+/* Very small phones: tighten up spacing and stack buttons full-width */
+@media (max-width: 380px) {
+  .hero-section { min-height: 82vh; }
+  .hero-container { padding-top: 24px; padding-bottom: 24px; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+}
+
 @media (max-width: 480px) {
   .hero-section { min-height: 78vh; }
+}
+
+/* Large desktops / big monitors: keep the hero from feeling empty on very
+   wide viewports by nudging the max readable width up slightly */
+@media (min-width: 1440px) {
+  .hero-container { max-width: 860px; }
+  .hero-subtitle { max-width: 52ch; }
+}
+
+@media (min-width: 1920px) {
+  .hero-section { min-height: 82vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-container { animation: none; opacity: 1; }
 }
