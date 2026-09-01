@@ -1,0 +1,45 @@
+/* ============================================
+   YOUR WORLD COME TRUE — Design Tokens
+   ============================================ */
+:root {
+  /* Color */
+  --ink: #12213F;          /* deep indigo-navy — dark bg, primary text */
+  --ink-soft: #24345A;     /* lighter ink for hover states on dark */
+  --paper: #FBF8F3;        /* warm paper background */
+  --paper-raised: #FFFFFF; /* card surfaces on paper */
+  --gold: #DE9A34;         /* signature accent — "come true" */
+  --gold-deep: #B87A1F;    /* gold hover/active */
+  --teal: #2F7A6D;         /* secondary accent — growth/health/finance */
+  --coral: #E15D46;        /* tertiary accent — deals/urgency */
+  --slate: #5B6472;        /* muted text */
+  --slate-line: #E3DED3;   /* hairline borders on paper */
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Scale (fluid, clamps for responsiveness) */
+  --step-hero: clamp(2.25rem, 5vw + 1rem, 4.5rem);
+  --step-h1: clamp(1.9rem, 3vw + 1rem, 3rem);
+  --step-h2: clamp(1.4rem, 1.5vw + 1rem, 2rem);
+  --step-body: 1rem;
+  --step-small: 0.875rem;
+  --step-label: 0.75rem;
+
+  /* Layout */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --shadow-card: 0 8px 24px -12px rgba(18, 33, 63, 0.25);
+  --shadow-lift: 0 16px 40px -16px rgba(18, 33, 63, 0.35);
+  --max-width: 1240px;
+  --nav-height: 72px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --speed: 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

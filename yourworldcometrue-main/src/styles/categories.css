@@ -1,0 +1,134 @@
+.categories-section {
+  padding: 64px 0 72px;
+}
+
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step-label);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-size: var(--step-h1);
+  color: var(--ink);
+  margin-bottom: 32px;
+  max-width: 20ch;
+}
+
+/* Mobile: horizontal snap-scroll strip (natural touch pattern) */
+.categories-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.categories-track::-webkit-scrollbar { display: none; }
+
+.category-card {
+  scroll-snap-align: start;
+  flex: 0 0 78%;
+  background: var(--paper-raised);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--speed) var(--ease), box-shadow var(--speed) var(--ease);
+  opacity: 0;
+  animation: card-in 500ms var(--ease) forwards;
+}
+
+.category-card:nth-child(1) { animation-delay: 40ms; }
+.category-card:nth-child(2) { animation-delay: 90ms; }
+.category-card:nth-child(3) { animation-delay: 140ms; }
+.category-card:nth-child(4) { animation-delay: 190ms; }
+.category-card:nth-child(5) { animation-delay: 240ms; }
+.category-card:nth-child(6) { animation-delay: 290ms; }
+.category-card:nth-child(7) { animation-delay: 340ms; }
+.category-card:nth-child(8) { animation-delay: 390ms; }
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.category-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+
+.category-image-wrapper {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.category-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  transition: transform 400ms var(--ease);
+}
+
+.category-card:hover .category-img { transform: scale(1.06); }
+
+.category-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(18,33,63,0.55) 100%);
+}
+
+.category-info {
+  padding: 16px 18px 20px;
+}
+
+.category-info h3 {
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.category-info p {
+  font-size: 0.85rem;
+  color: var(--slate);
+}
+
+/* Small phones: slightly narrower cards so a peek of the next one always shows */
+@media (max-width: 380px) {
+  .category-card { flex: 0 0 84%; }
+  .section-title { font-size: 1.6rem; }
+}
+
+/* Tablets and up: switch to a grid */
+@media (min-width: 700px) and (max-width: 899px) {
+  .categories-track {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    overflow: visible;
+  }
+  .category-card { flex: none; }
+}
+
+@media (min-width: 900px) {
+  .categories-track {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    overflow: visible;
+  }
+  .category-card { flex: none; }
+}
+
+/* Large desktop / big monitors: a touch more breathing room, not more columns
+   (keeps cards from becoming oddly wide on ultra-wide screens) */
+@media (min-width: 1440px) {
+  .categories-track { gap: 24px; }
+  .section-title { font-size: 2.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-card { animation: none; opacity: 1; }
+}

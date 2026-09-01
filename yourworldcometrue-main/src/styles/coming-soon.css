@@ -1,0 +1,20 @@
+.coming-soon-section {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 80px 20px;
+}
+
+.coming-soon-section h1 {
+  font-size: var(--step-h1);
+  margin-bottom: 16px;
+}
+
+.coming-soon-desc {
+  color: var(--slate);
+  max-width: 44ch;
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
