@@ -1,0 +1,37 @@
+.video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 33, 63, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.video-player-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+}
+
+.video-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(251,248,243,0.15);
+  border: none;
+  color: var(--paper);
+  font-size: 1.1rem;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}

@@ -1,0 +1,119 @@
+.hero-section {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 25%;
+  opacity: 0.38;
+}
+
+.hero-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(18,33,63,0.55) 0%, rgba(18,33,63,0.85) 100%);
+}
+
+/* quiet topographic contour motif — ties to the "atlas of your world" idea */
+.hero-contour {
+  position: absolute;
+  right: -10%;
+  top: -10%;
+  width: 70%;
+  height: 120%;
+  opacity: 0.12;
+  background-image:
+    repeating-radial-gradient(circle at 70% 30%, transparent 0, transparent 38px, var(--gold) 39px, transparent 40px);
+  pointer-events: none;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  opacity: 0;
+  animation: hero-in 650ms var(--ease) 80ms forwards;
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+
+.hero-title {
+  font-size: var(--step-hero);
+  color: var(--paper);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hero-subtitle {
+  margin-top: 22px;
+  font-size: clamp(1rem, 1vw + 0.9rem, 1.2rem);
+  color: rgba(251,248,243,0.8);
+  max-width: 46ch;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.btn-lg { padding: 14px 28px; font-size: 1rem; }
+
+.hero-actions .btn-ghost {
+  background: transparent;
+  color: var(--paper);
+  border-color: rgba(251,248,243,0.35);
+}
+
+.hero-actions .btn-ghost:hover { border-color: var(--paper); }
+
+/* Very small phones: tighten up spacing and stack buttons full-width */
+@media (max-width: 380px) {
+  .hero-section { min-height: 82vh; }
+  .hero-container { padding-top: 24px; padding-bottom: 24px; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .hero-section { min-height: 78vh; }
+}
+
+/* Large desktops / big monitors: keep the hero from feeling empty on very
+   wide viewports by nudging the max readable width up slightly */
+@media (min-width: 1440px) {
+  .hero-container { max-width: 860px; }
+  .hero-subtitle { max-width: 52ch; }
+}
+
+@media (min-width: 1920px) {
+  .hero-section { min-height: 82vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-container { animation: none; opacity: 1; }
+}

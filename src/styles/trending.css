@@ -1,0 +1,9 @@
+.trending-section {
+  padding: 32px 0 64px;
+}
+
+.trending-placeholder {
+  color: var(--slate);
+  font-size: 0.95rem;
+  max-width: 48ch;
+}
