@@ -148,32 +148,35 @@ const styles = {
 export default AiAgentModal;*/
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 
-const BACKEND_URL = 'https://yourworldcometrue.onrender.com';
+const BACKEND_URL = 'https://yourworldcometrue.onrender.com'; // Your Render backend URL
 
-const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    if (window.Razorpay) {
-      resolve(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
-
-const AiAgentModal = ({ isOpen, onClose, onSelectOption }) => {
+const AiAgentModal = ({ isOpen, onClose, onOpenPricing }) => {
+  const [activeTab, setActiveTab] = useState('menu'); // 'menu' | 'chat' | 'image-to-image' | 'image-to-video'
   const [credits, setCredits] = useState(null);
   const [user, setUser] = useState(null);
-  const [loadingPayment, setLoadingPayment] = useState(false);
+
+  // Chat State
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatEndRef = useRef(null);
+
+  // Media State
+  const [mediaPrompt, setMediaPrompt] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [mediaLoading, setMediaLoading] = useState(false);
+  const [generatedOutput, setGeneratedOutput] = useState('');
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      setActiveTab('menu');
+      setGeneratedOutput('');
+      return;
+    }
 
     supabase.auth.getUser().then(async ({ data }) => {
       if (data?.user) {
@@ -189,171 +192,215 @@ const AiAgentModal = ({ isOpen, onClose, onSelectOption }) => {
     });
   }, [isOpen]);
 
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
   if (!isOpen) return null;
 
-  const handlePayment = async (amountInRupees = 499, planType = 'subscription') => {
-    if (!user) {
-      alert('Please log in first to purchase or subscribe.');
-      return;
-    }
-
-    setLoadingPayment(true);
-
-    const isLoaded = await loadRazorpayScript();
-    if (!isLoaded) {
-      alert('Failed to connect to payment gateway. Please check your connection.');
-      setLoadingPayment(false);
-      return;
-    }
+  // 1. Send Chat Message (Gemini)
+  const handleSendChat = async () => {
+    if (!chatInput.trim() || chatLoading) return;
+    const msg = chatInput.trim();
+    setChatInput('');
+    setChatMessages((prev) => [...prev, { role: 'user', text: msg }]);
+    setChatLoading(true);
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/payment/create-order`, {
+      const res = await fetch(`${BACKEND_URL}/api/ai/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg, userId: user?.id }),
+      });
+      const data = await res.json();
+      if (data.error === 'OUT_OF_CREDITS') {
+        alert('Credits exhausted! Please upgrade your plan.');
+        if (onOpenPricing) onOpenPricing();
+        return;
+      }
+      setChatMessages((prev) => [...prev, { role: 'ai', text: data.reply || 'No response generated.' }]);
+      if (credits !== 'Unlimited' && typeof credits === 'number') setCredits((c) => Math.max(0, c - 1));
+    } catch (err) {
+      setChatMessages((prev) => [...prev, { role: 'ai', text: 'Error connecting to AI service.' }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // 2. Upload file to Supabase & Generate Video/Image
+  const handleGenerateMedia = async (endpoint) => {
+    if (!selectedFile) {
+      alert('Please upload an image first.');
+      return;
+    }
+    setMediaLoading(true);
+    setGeneratedOutput('');
+
+    try {
+      // Upload to Supabase Storage
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+        .from('ai-uploads')
+        .upload(fileName, selectedFile);
+
+      if (uploadError) throw new Error(uploadError.message);
+
+      const { data: publicUrlData } = supabase.storage
+        .from('ai-uploads')
+        .getPublicUrl(fileName);
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      // Call Render Backend
+      const res = await fetch(`${BACKEND_URL}/api/ai/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount: amountInRupees,
-          planType,
-          userId: user.id,
+          imageUrl: publicUrl,
+          prompt: mediaPrompt || 'Cinematic, high quality',
+          userId: user?.id,
         }),
       });
 
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Failed to create order');
+      if (!res.ok) throw new Error(data.message || data.error || 'Generation failed');
 
-      const options = {
-        key: 'rzp_test_YourKeyHere', // Replace with your Razorpay Key ID
-        amount: data.order.amount,
-        currency: data.order.currency,
-        name: 'Your World Come True',
-        description: planType === 'subscription' ? 'Unlimited AI Monthly Plan' : '50 AI Credits Pack',
-        order_id: data.order.id,
-        prefill: { email: user.email },
-        theme: { color: '#4F46E5' },
-        handler: async (response) => {
-          const verifyRes = await fetch(`${BACKEND_URL}/api/payment/verify`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              userId: user.id,
-              planType,
-            }),
-          });
-
-          const verifyData = await verifyRes.json();
-          if (verifyData.success) {
-            alert('🎉 Payment successful! Your account has been upgraded.');
-            setCredits(planType === 'subscription' ? 'Unlimited' : ((credits || 0) + 50));
-          } else {
-            alert('Payment verification failed.');
-          }
-        },
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
+      setGeneratedOutput(data.projectId || 'Job submitted successfully! Processing output...');
+      if (credits !== 'Unlimited' && typeof credits === 'number') setCredits((c) => Math.max(0, c - 1));
     } catch (err) {
-      alert('Payment error: ' + err.message);
+      alert('Generation error: ' + err.message);
     } finally {
-      setLoadingPayment(false);
+      setMediaLoading(false);
     }
   };
 
-  const handleSelect = (optionId) => {
-    if (!user) {
-      alert('Please log in first to use AI Studio.');
-      return;
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
-    if (credits === 0) {
-      handlePayment(499, 'subscription');
-      return;
-    }
-    onSelectOption(optionId);
-    onClose();
   };
-
-  const options = [
-    {
-      id: 'chat',
-      icon: '💬',
-      title: 'Chat Assistant',
-      desc: 'Ask questions, get recommendations & support',
-    },
-    {
-      id: 'image-to-image',
-      icon: '🎨',
-      title: 'Image to Image',
-      desc: 'Transform, remix, and enhance photos',
-    },
-    {
-      id: 'image-to-video',
-      icon: '🎬',
-      title: 'Image to Video',
-      desc: 'Animate still images into dynamic AI videos',
-    },
-  ];
 
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.card} onClick={(e) => e.stopPropagation()}>
+        
+        {/* Header */}
         <div style={styles.header}>
-          <span style={styles.badge}>🤖 AI Studio</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {activeTab !== 'menu' && (
+              <button style={styles.backBtn} onClick={() => setActiveTab('menu')}>← Back</button>
+            )}
+            <span style={styles.badge}>
+              {activeTab === 'menu' && '🤖 AI Studio'}
+              {activeTab === 'chat' && '💬 AI Chat Assistant'}
+              {activeTab === 'image-to-image' && '🎨 Image to Image'}
+              {activeTab === 'image-to-video' && '🎬 Image to Video'}
+            </span>
+          </div>
+
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <span style={styles.creditPill}>⚡ Credits: {credits ?? '...'}</span>
-            <button
-              style={styles.upgradeBtn}
-              onClick={() => handlePayment(499, 'subscription')}
-              disabled={loadingPayment}
-            >
-              {loadingPayment ? '...' : '💎 Upgrade'}
-            </button>
             <button style={styles.closeBtn} onClick={onClose}>&times;</button>
           </div>
         </div>
 
-        <h2 style={styles.title}>What would you like to create?</h2>
-        <p style={styles.subtitle}>Choose an AI tool to get started:</p>
+        {/* View 1: Main Menu Options */}
+        {activeTab === 'menu' && (
+          <>
+            <h2 style={styles.title}>What would you like to create?</h2>
+            <p style={styles.subtitle}>Choose an AI tool to get started:</p>
+            <div style={styles.grid}>
+              <div style={styles.optionCard} onClick={() => setActiveTab('chat')}>
+                <div style={styles.iconBox}>💬</div>
+                <div>
+                  <div style={styles.optionTitle}>Chat Assistant</div>
+                  <div style={styles.optionDesc}>Ask questions, get recommendations & assistance</div>
+                </div>
+              </div>
 
-        <div style={styles.grid}>
-          {options.map((opt) => (
-            <div
-              key={opt.id}
-              style={styles.optionCard}
-              onClick={() => handleSelect(opt.id)}
-            >
-              <div style={styles.iconBox}>{opt.icon}</div>
-              <div>
-                <div style={styles.optionTitle}>{opt.title}</div>
-                <div style={styles.optionDesc}>{opt.desc}</div>
+              <div style={styles.optionCard} onClick={() => setActiveTab('image-to-image')}>
+                <div style={styles.iconBox}>🎨</div>
+                <div>
+                  <div style={styles.optionTitle}>Image to Image</div>
+                  <div style={styles.optionDesc}>Transform, remix, and enhance photos</div>
+                </div>
+              </div>
+
+              <div style={styles.optionCard} onClick={() => setActiveTab('image-to-video')}>
+                <div style={styles.iconBox}>🎬</div>
+                <div>
+                  <div style={styles.optionTitle}>Image to Video</div>
+                  <div style={styles.optionDesc}>Animate still images into dynamic AI videos</div>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+          </>
+        )}
 
-        <div style={styles.pricingBanner}>
-          <div>
-            <div style={{ fontWeight: 600, fontSize: '13px', color: '#1E293B' }}>Unlimited AI Access</div>
-            <div style={{ fontSize: '11px', color: '#64748B' }}>₹499 / mo or ₹99 for 50 credits</div>
+        {/* View 2: Chat Interface */}
+        {activeTab === 'chat' && (
+          <div style={{ display: 'flex', flexDirection: 'column', height: '360px' }}>
+            <div style={styles.chatArea}>
+              {chatMessages.length === 0 && (
+                <div style={styles.emptyMsg}>Start a conversation with your AI Assistant...</div>
+              )}
+              {chatMessages.map((m, idx) => (
+                <div key={idx} style={{ margin: '6px 0', textAlign: m.role === 'user' ? 'right' : 'left' }}>
+                  <span style={m.role === 'user' ? styles.userBubble : styles.aiBubble}>
+                    {m.text}
+                  </span>
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+            <div style={styles.inputRow}>
+              <input
+                style={styles.textInput}
+                placeholder="Ask anything..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
+              />
+              <button style={styles.actionBtn} onClick={handleSendChat} disabled={chatLoading}>
+                {chatLoading ? '...' : 'Send'}
+              </button>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '6px' }}>
+        )}
+
+        {/* View 3: Media Generator (Image-to-Image & Image-to-Video) */}
+        {(activeTab === 'image-to-image' || activeTab === 'image-to-video') && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <input type="file" accept="image/*" onChange={handleFileChange} />
+
+            {previewUrl && (
+              <img src={previewUrl} alt="Preview" style={styles.mediaPreview} />
+            )}
+
+            <input
+              style={styles.textInput}
+              placeholder="Enter styling prompt (e.g. cinematic motion, 4k ultra-realistic)..."
+              value={mediaPrompt}
+              onChange={(e) => setMediaPrompt(e.target.value)}
+            />
+
             <button
-              style={styles.packBtn}
-              onClick={() => handlePayment(99, 'credit_pack_50')}
-              disabled={loadingPayment}
+              style={styles.actionBtn}
+              onClick={() => handleGenerateMedia(activeTab === 'image-to-video' ? 'image-to-video' : 'image-to-image')}
+              disabled={mediaLoading}
             >
-              +50 Credits (₹99)
+              {mediaLoading ? 'Generating Media...' : '✨ Generate'}
             </button>
-            <button
-              style={styles.subBtn}
-              onClick={() => handlePayment(499, 'subscription')}
-              disabled={loadingPayment}
-            >
-              Subscribe (₹499)
-            </button>
+
+            {generatedOutput && (
+              <div style={styles.outputBox}>{generatedOutput}</div>
+            )}
           </div>
-        </div>
+        )}
+
       </div>
     </div>
   );
@@ -362,10 +409,7 @@ const AiAgentModal = ({ isOpen, onClose, onSelectOption }) => {
 const styles = {
   overlay: {
     position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    inset: 0,
     backgroundColor: 'rgba(15, 23, 42, 0.65)',
     backdropFilter: 'blur(5px)',
     display: 'flex',
@@ -378,14 +422,14 @@ const styles = {
     borderRadius: '16px',
     padding: '24px',
     width: '90%',
-    maxWidth: '440px',
+    maxWidth: '480px',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '12px',
+    marginBottom: '14px',
   },
   badge: {
     background: '#EEF2FF',
@@ -403,14 +447,12 @@ const styles = {
     fontSize: '12px',
     fontWeight: '600',
   },
-  upgradeBtn: {
-    background: 'linear-gradient(135deg, #6366f1, #a855f7)',
-    color: '#ffffff',
+  backBtn: {
+    background: '#F1F5F9',
     border: 'none',
-    padding: '4px 10px',
-    borderRadius: '12px',
+    padding: '4px 8px',
+    borderRadius: '8px',
     fontSize: '11px',
-    fontWeight: '600',
     cursor: 'pointer',
   },
   closeBtn: {
@@ -420,22 +462,9 @@ const styles = {
     cursor: 'pointer',
     color: '#64748B',
   },
-  title: {
-    margin: '0 0 6px 0',
-    fontSize: '18px',
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  subtitle: {
-    margin: '0 0 16px 0',
-    fontSize: '13px',
-    color: '#64748B',
-  },
-  grid: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-  },
+  title: { margin: '0 0 6px 0', fontSize: '18px', fontWeight: '700', color: '#0F172A' },
+  subtitle: { margin: '0 0 16px 0', fontSize: '13px', color: '#64748B' },
+  grid: { display: 'flex', flexDirection: 'column', gap: '10px' },
   optionCard: {
     display: 'flex',
     alignItems: 'center',
@@ -444,55 +473,70 @@ const styles = {
     borderRadius: '10px',
     border: '1px solid #E2E8F0',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
   },
-  iconBox: {
-    fontSize: '22px',
-    background: '#F8FAFC',
-    padding: '8px',
-    borderRadius: '8px',
-  },
-  optionTitle: {
-    fontSize: '14px',
-    fontWeight: '600',
-    color: '#1E293B',
-  },
-  optionDesc: {
-    fontSize: '12px',
-    color: '#64748B',
-    marginTop: '2px',
-  },
-  pricingBanner: {
-    marginTop: '16px',
-    padding: '12px 14px',
+  iconBox: { fontSize: '22px', background: '#F8FAFC', padding: '8px', borderRadius: '8px' },
+  optionTitle: { fontSize: '14px', fontWeight: '600', color: '#1E293B' },
+  optionDesc: { fontSize: '12px', color: '#64748B', marginTop: '2px' },
+  chatArea: {
+    flex: 1,
+    overflowY: 'auto',
     background: '#F8FAFC',
     borderRadius: '10px',
+    padding: '12px',
+    marginBottom: '10px',
     border: '1px solid #E2E8F0',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    gap: '8px',
   },
-  packBtn: {
-    background: '#E2E8F0',
+  emptyMsg: { textAlign: 'center', color: '#94A3B8', fontSize: '13px', marginTop: '80px' },
+  userBubble: {
+    background: '#4F46E5',
+    color: '#fff',
+    padding: '7px 12px',
+    borderRadius: '12px 12px 0 12px',
+    display: 'inline-block',
+    fontSize: '13px',
+    maxWidth: '80%',
+    textAlign: 'left',
+  },
+  aiBubble: {
+    background: '#FFFFFF',
     color: '#1E293B',
-    border: 'none',
-    padding: '6px 10px',
-    borderRadius: '8px',
-    fontSize: '11px',
-    fontWeight: '600',
-    cursor: 'pointer',
+    padding: '7px 12px',
+    borderRadius: '12px 12px 12px 0',
+    display: 'inline-block',
+    fontSize: '13px',
+    maxWidth: '80%',
+    textAlign: 'left',
+    border: '1px solid #E2E8F0',
   },
-  subBtn: {
-    background: '#0F172A',
+  inputRow: { display: 'flex', gap: '8px' },
+  textInput: {
+    flex: 1,
+    padding: '9px 12px',
+    borderRadius: '8px',
+    border: '1px solid #CBD5E1',
+    fontSize: '13px',
+  },
+  actionBtn: {
+    background: '#4F46E5',
     color: '#FFFFFF',
     border: 'none',
-    padding: '6px 12px',
+    padding: '9px 16px',
     borderRadius: '8px',
-    fontSize: '11px',
     fontWeight: '600',
     cursor: 'pointer',
+  },
+  mediaPreview: {
+    width: '100%',
+    maxHeight: '160px',
+    objectFit: 'cover',
+    borderRadius: '8px',
+  },
+  outputBox: {
+    background: '#F1F5F9',
+    padding: '10px',
+    borderRadius: '8px',
+    fontSize: '12px',
+    wordBreak: 'break-all',
   },
 };
 
