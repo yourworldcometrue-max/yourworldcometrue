@@ -190,8 +190,8 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Handle preflight requests for all endpoints
-app.options('*', cors());
+// Handle preflight requests for all endpoints (Express 5 compatible)
+app.options(/(.*)/, cors());
 
 app.use(express.json());
 
